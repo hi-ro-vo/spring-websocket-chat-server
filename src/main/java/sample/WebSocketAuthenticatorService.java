@@ -36,7 +36,7 @@ public class WebSocketAuthenticatorService {
         if (user == null){
             throw new BadCredentialsException("Bad credentials for user " + username);
         }
-        System.out.println(password);
+
         if (!bCryptPasswordEncoder.matches(password, user.getPassword())){
             throw new BadCredentialsException("Bad password for user " + username);
         }

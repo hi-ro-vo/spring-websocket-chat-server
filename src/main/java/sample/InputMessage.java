@@ -1,10 +1,5 @@
 package sample;
 
-/*
- * Message received from client.
- *
- * @Author Jay Sridhar
- */
 public class InputMessage
 {
     private String from;

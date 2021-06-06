@@ -16,12 +16,16 @@ import org.springframework.stereotype.Component;
 @Component
 public class AuthChannelInterceptorAdapter implements ChannelInterceptor {
     private static final String USERNAME_HEADER = "login";
-    private static final String PASSWORD_HEADER = "passcode";
+    private static final String PASSWORD_HEADER = "pass";
+    private static final String REGISTER_HEADER = "register";
     private final WebSocketAuthenticatorService webSocketAuthenticatorService;
 
     @Autowired
     @Qualifier("clientOutboundChannel")
     private MessageChannel clientOutboundChannel;
+
+    @Autowired
+    WebSocketRegisterService registerService;
 
     @Autowired
     public AuthChannelInterceptorAdapter(final WebSocketAuthenticatorService webSocketAuthenticatorService) {
@@ -36,6 +40,17 @@ public class AuthChannelInterceptorAdapter implements ChannelInterceptor {
             final String username = accessor.getFirstNativeHeader(USERNAME_HEADER);
             final String password = accessor.getFirstNativeHeader(PASSWORD_HEADER);
             final String sessionId = accessor.getSessionId();
+                try {
+                    if (accessor.getFirstNativeHeader(REGISTER_HEADER).equals("true")){
+                        StompHeaderAccessor headerAccessor = StompHeaderAccessor.create(StompCommand.ERROR);
+                        headerAccessor.setMessage(registerService.registration(username, password));
+                        headerAccessor.setSessionId(sessionId);
+                        clientOutboundChannel.send(MessageBuilder.createMessage(new byte[0], headerAccessor.getMessageHeaders()));
+                        return null;
+                    }
+                } catch (NullPointerException e){
+
+                }
 
                 try {
                     final UsernamePasswordAuthenticationToken user = webSocketAuthenticatorService.getAuthenticatedOrFail(username, password);
@@ -45,6 +60,7 @@ public class AuthChannelInterceptorAdapter implements ChannelInterceptor {
                     headerAccessor.setMessage(error.getMessage());
                     headerAccessor.setSessionId(sessionId);
                     clientOutboundChannel.send(MessageBuilder.createMessage(new byte[0], headerAccessor.getMessageHeaders()));
+                    return null;
                 }
 
         }

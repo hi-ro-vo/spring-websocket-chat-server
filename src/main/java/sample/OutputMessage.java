@@ -2,11 +2,7 @@ package sample;
 
 import java.util.Date;
 
-/*
- * Output message sent to client.
- *
- * @Author Jay Sridhar
- */
+
 public class OutputMessage
 {
     private String from;
@@ -16,11 +12,10 @@ public class OutputMessage
 
     public OutputMessage() {}
 
-    public OutputMessage(String from,String message,String topic)
+    public OutputMessage(String from,String message)
     {
 	this.from = from;
 	this.message = message;
-	this.topic = topic;
     }
 
     public String getFrom()

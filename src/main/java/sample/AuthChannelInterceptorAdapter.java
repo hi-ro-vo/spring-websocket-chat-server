@@ -33,35 +33,35 @@ public class AuthChannelInterceptorAdapter implements ChannelInterceptor {
     }
 
     @Override
-    public Message<?> preSend(final Message<?> message, final MessageChannel channel){
+    public Message<?> preSend(final Message<?> message, final MessageChannel channel) {
         final StompHeaderAccessor accessor = MessageHeaderAccessor.getAccessor(message, StompHeaderAccessor.class);
 
         if (StompCommand.CONNECT == accessor.getCommand()) {
             final String username = accessor.getFirstNativeHeader(USERNAME_HEADER);
             final String password = accessor.getFirstNativeHeader(PASSWORD_HEADER);
             final String sessionId = accessor.getSessionId();
-                try {
-                    if (accessor.getFirstNativeHeader(REGISTER_HEADER).equals("true")){
-                        StompHeaderAccessor headerAccessor = StompHeaderAccessor.create(StompCommand.ERROR);
-                        headerAccessor.setMessage(registerService.registration(username, password));
-                        headerAccessor.setSessionId(sessionId);
-                        clientOutboundChannel.send(MessageBuilder.createMessage(new byte[0], headerAccessor.getMessageHeaders()));
-                        return null;
-                    }
-                } catch (NullPointerException e){
-
-                }
-
-                try {
-                    final UsernamePasswordAuthenticationToken user = webSocketAuthenticatorService.getAuthenticatedOrFail(username, password);
-                    accessor.setUser(user);
-                } catch (AuthenticationException error){
+            try {
+                if (accessor.getFirstNativeHeader(REGISTER_HEADER).equals("true")) {
                     StompHeaderAccessor headerAccessor = StompHeaderAccessor.create(StompCommand.ERROR);
-                    headerAccessor.setMessage(error.getMessage());
+                    headerAccessor.setMessage(registerService.registration(username, password));
                     headerAccessor.setSessionId(sessionId);
                     clientOutboundChannel.send(MessageBuilder.createMessage(new byte[0], headerAccessor.getMessageHeaders()));
                     return null;
                 }
+            } catch (NullPointerException e) {
+
+            }
+
+            try {
+                final UsernamePasswordAuthenticationToken user = webSocketAuthenticatorService.getAuthenticatedOrFail(username, password);
+                accessor.setUser(user);
+            } catch (AuthenticationException error) {
+                StompHeaderAccessor headerAccessor = StompHeaderAccessor.create(StompCommand.ERROR);
+                headerAccessor.setMessage(error.getMessage());
+                headerAccessor.setSessionId(sessionId);
+                clientOutboundChannel.send(MessageBuilder.createMessage(new byte[0], headerAccessor.getMessageHeaders()));
+                return null;
+            }
 
         }
         return message;

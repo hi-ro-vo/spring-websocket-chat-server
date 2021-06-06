@@ -11,21 +11,21 @@ import java.util.Collections;
 
 @Component
 public class WebSocketRegisterService {
-        @Autowired
-        UserRepository userRepository;
-        @Autowired
-        BCryptPasswordEncoder bCryptPasswordEncoder;
+    @Autowired
+    UserRepository userRepository;
+    @Autowired
+    BCryptPasswordEncoder bCryptPasswordEncoder;
 
-        public String registration(final String  username, final String password){
-                 if (userRepository.findByUsername(username) != null){
-                         return "Already registered";
-                 }
-            User user = new User();
-                 user.setPassword(bCryptPasswordEncoder.encode(password));
-                 user.setUsername(username);
-                 user.setRoles(Collections.singleton(new Role(1L, "ROLE_USER")));
-            userRepository.save(user);
-
-            return "Registered successfully";
+    public String registration(final String username, final String password) {
+        if (userRepository.findByUsername(username) != null) {
+            return "Already registered";
         }
+        User user = new User();
+        user.setPassword(bCryptPasswordEncoder.encode(password));
+        user.setUsername(username);
+        user.setRoles(Collections.singleton(new Role(1L, "ROLE_USER")));
+        userRepository.save(user);
+
+        return "Registered successfully";
+    }
 }

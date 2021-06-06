@@ -14,9 +14,9 @@ public class User implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Size(min=5, message = "Не меньше 5 знаков")
+    @Size(min = 5, message = "Не меньше 5 знаков")
     private String username;
-    @Size(min=5, message = "Не меньше 5 знаков")
+    @Size(min = 5, message = "Не меньше 5 знаков")
     private String password;
     @Transient
     private String passwordConfirm;

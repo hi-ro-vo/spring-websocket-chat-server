@@ -1,11 +1,17 @@
-package sample;
+package sample.entity;
 
+import javax.persistence.*;
 import java.util.Date;
 
-
+@Entity
+@Table(name = "t_message")
 public class OutputMessage
 {
-    private String from;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long Id;
+
+    private String sender;
     private String message;
     private String topic;
     private Date time = new Date();
@@ -14,18 +20,18 @@ public class OutputMessage
 
     public OutputMessage(String from,String message)
     {
-	this.from = from;
+	this.sender = from;
 	this.message = message;
     }
 
-    public String getFrom()
+    public String getSender()
     {
-        return from;
+        return sender;
     }
 
-    public void setFrom(String from)
+    public void setSender(String from)
     {
-        this.from = from;
+        this.sender = from;
     }
 
     public String getMessage()
@@ -51,5 +57,17 @@ public class OutputMessage
     public Date getTime()
     {
         return time;
+    }
+
+    public Long getId() {
+        return Id;
+    }
+
+    public void setId(Long id) {
+        Id = id;
+    }
+
+    public void setTime(Date time) {
+        this.time = time;
     }
 }
